@@ -118,7 +118,7 @@ services:
     ports:
       - "8123:8123"
     volumes:
-      - ./db:/var/lib/clickhouse
+      - ./vol/click:/var/lib/clickhouse
     networks:
       - analytics
 
