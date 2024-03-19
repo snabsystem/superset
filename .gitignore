@@ -109,6 +109,7 @@ release.json
 # Translation binaries
 messages.mo
 
-docker/requirements-local.txt
+# suits enough for our clickhouse needs
+# docker/requirements-local.txt
 
 cache/
