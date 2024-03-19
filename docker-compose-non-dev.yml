@@ -36,6 +36,8 @@ services:
     restart: unless-stopped
     volumes:
       - redis:/data
+    networks:
+      - analytics
 
   db:
     env_file: docker/.env
@@ -45,6 +47,8 @@ services:
     volumes:
       - db_home:/var/lib/postgresql/data
       - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    networks:
+      - analytics
 
   superset:
     env_file: docker/.env
@@ -58,6 +62,8 @@ services:
       - 8088:8088
     depends_on: *superset-depends-on
     volumes: *superset-volumes
+    networks:
+      - analytics
 
   superset-init:
     container_name: superset_init
@@ -70,6 +76,8 @@ services:
     volumes: *superset-volumes
     healthcheck:
       disable: true
+    networks:
+      - analytics
 
   superset-worker:
     build:
@@ -87,6 +95,8 @@ services:
           "CMD-SHELL",
           "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME",
         ]
+    networks:
+      - analytics
 
   superset-worker-beat:
     build:
@@ -100,6 +110,26 @@ services:
     volumes: *superset-volumes
     healthcheck:
       disable: true
+    networks:
+      - analytics
+
+  click-server:
+    image: yandex/clickhouse-server
+    ports:
+      - "8123:8123"
+    volumes:
+      - ./db:/var/lib/clickhouse
+    networks:
+      - analytics
+
+  click-client:
+    image: yandex/clickhouse-client
+    entrypoint:
+      - /bin/sleep
+    command:
+      - infinity
+    networks:
+      - analytics
 
 volumes:
   superset_home:
@@ -107,4 +137,8 @@ volumes:
   db_home:
     external: false
   redis:
+    external: false
+
+networks:
+  analytics:
     external: false
