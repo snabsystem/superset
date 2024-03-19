@@ -114,9 +114,10 @@ services:
       - analytics
 
   click-server:
+    env_file: docker/.env
     image: yandex/clickhouse-server
     ports:
-      - "8123:8123"
+      - "38123:8123"
     volumes:
       - ./vol/click:/var/lib/clickhouse
     networks:
