@@ -119,9 +119,12 @@ services:
     ports:
       - "38123:8123"
     volumes:
-      - ./vol/click:/var/lib/clickhouse
+      - ./vol/click/data:/var/lib/clickhouse
+      - ./vol/click/init:/docker-entrypoint-initdb.d
     networks:
       - analytics
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   click-client:
     image: yandex/clickhouse-client
